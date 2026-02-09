@@ -1,15 +1,19 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
-from dotenv import load_dotenv
-from pathlib import Path
+import certifi
+from motor.motor_asyncio import AsyncIOMotorClient
 
-# Load environment variables
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+# Read ONLY from environment (no fallback)
+MONGO_URL = os.environ["MONGO_URL"]
+DB_NAME = os.environ["DB_NAME"]
 
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'cemention_db')]
+# MongoDB Atlas client with TLS
+client = AsyncIOMotorClient(
+    MONGO_URL,
+    tls=True,
+    tlsCAFile=certifi.where()
+)
+
+db = client[DB_NAME]
 
 # Collections
 users_collection = db.users
