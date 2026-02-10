@@ -2,7 +2,6 @@ import os
 import certifi
 from motor.motor_asyncio import AsyncIOMotorClient
 
-# Read environment variables safely
 MONGO_URL = os.environ.get("MONGO_URL", "").strip()
 DB_NAME = os.environ.get("DB_NAME", "cemention_db").strip()
 
@@ -10,7 +9,7 @@ client = None
 db = None
 
 if not MONGO_URL:
-    print("❌ MONGO_URL not set in environment")
+    print("❌ MONGO_URL not set")
 else:
     try:
         client = AsyncIOMotorClient(
@@ -20,11 +19,11 @@ else:
             serverSelectionTimeoutMS=10000,
         )
         db = client[DB_NAME]
-        print("✅ MongoDB connected successfully")
+        print("✅ MongoDB connected")
     except Exception as e:
         print("❌ MongoDB connection failed:", e)
 
-# Collections (SAFE — won’t crash app if db is None)
+# Collections (SAFE)
 users_collection = db["users"] if db else None
 products_collection = db["products"] if db else None
 addresses_collection = db["addresses"] if db else None
