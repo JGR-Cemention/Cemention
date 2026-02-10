@@ -8,26 +8,26 @@ DB_NAME = os.environ.get("DB_NAME", "cemention_db").strip()
 client = None
 db = None
 
-if not MONGO_URL:
-    print("❌ MONGO_URL not set")
-else:
+if MONGO_URL:
     try:
         client = AsyncIOMotorClient(
             MONGO_URL,
             tls=True,
             tlsCAFile=certifi.where(),
-            serverSelectionTimeoutMS=10000,
+            serverSelectionTimeoutMS=5000,
         )
         db = client[DB_NAME]
-        print("✅ MongoDB connected")
+        print("⚠️ Mongo connected (but auth may still fail)")
     except Exception as e:
-        print("❌ MongoDB connection failed:", e)
+        print("❌ Mongo connection failed:", e)
+else:
+    print("⚠️ MONGO_URL not set")
 
-# Collections (SAFE)
-users_collection = db["users"] if db else None
-products_collection = db["products"] if db else None
-addresses_collection = db["addresses"] if db else None
-carts_collection = db["carts"] if db else None
-orders_collection = db["orders"] if db else None
-request_orders_collection = db["request_orders"] if db else None
-otp_collection = db["otps"] if db else None
+# SAFE collections (won't crash)
+users_collection = None
+products_collection = None
+addresses_collection = None
+carts_collection = None
+orders_collection = None
+request_orders_collection = None
+otp_collection = None
