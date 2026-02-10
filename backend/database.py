@@ -1,3 +1,5 @@
+# backend/database.py
+
 import os
 import certifi
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -14,20 +16,22 @@ if MONGO_URL:
             MONGO_URL,
             tls=True,
             tlsCAFile=certifi.where(),
-            serverSelectionTimeoutMS=5000,
+            serverSelectionTimeoutMS=10000,
+            connectTimeoutMS=10000,
         )
         db = client[DB_NAME]
-        print("⚠️ Mongo connected (but auth may still fail)")
+        print("✅ MongoDB connected")
     except Exception as e:
-        print("❌ Mongo connection failed:", e)
+        print("❌ MongoDB connection failed:", e)
 else:
-    print("⚠️ MONGO_URL not set")
+    print("⚠️ MONGO_URL not set — running without DB")
 
-# SAFE collections (won't crash)
-users_collection = None
-products_collection = None
-addresses_collection = None
-carts_collection = None
-orders_collection = None
-request_orders_collection = None
-otp_collection = None
+# Safe collections (won’t crash app)
+users_collection = db["users"] if db else None
+products_collection = db["products"] if db else None
+addresses_collection = db["addresses"] if db else None
+carts_collection = db["carts"] if db else None
+orders_collection = db["orders"] if db else None
+request_orders_collection = db["request_orders"] if db else None
+otp_collection = db["otps"] if db else None
+
