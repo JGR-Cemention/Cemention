@@ -9,25 +9,22 @@ client = None
 db = None
 
 if MONGO_URL:
-    try:
-        client = AsyncIOMotorClient(
-            MONGO_URL,
-            tls=True,
-            tlsCAFile=certifi.where(),
-            serverSelectionTimeoutMS=10000,
-        )
-        db = client[DB_NAME]
-        print("✅ MongoDB client initialized")
-    except Exception as e:
-        print("❌ MongoDB init failed:", e)
+    client = AsyncIOMotorClient(
+        MONGO_URL,
+        tls=True,
+        tlsCAFile=certifi.where(),
+        serverSelectionTimeoutMS=10000,
+    )
+    db = client[DB_NAME]
+    print("✅ Mongo connected")
 else:
-    print("⚠️ MONGO_URL not set")
+    print("⚠️ MONGO_URL missing")
 
-# SAFE collections (won’t crash even if db is None)
-users_collection = db["users"] if db else None
-products_collection = db["products"] if db else None
-addresses_collection = db["addresses"] if db else None
-carts_collection = db["carts"] if db else None
-orders_collection = db["orders"] if db else None
-request_orders_collection = db["request_orders"] if db else None
-otp_collection = db["otps"] if db else None
+users_collection = db.users if db else None
+products_collection = db.products if db else None
+addresses_collection = db.addresses if db else None
+carts_collection = db.carts if db else None
+orders_collection = db.orders if db else None
+request_orders_collection = db.request_orders if db else None
+otp_collection = db.otps if db else None
+
